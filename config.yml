@@ -1,0 +1,4 @@
+jtype: executor-image-clip-classifier
+metas:
+  py_modules:
+    - clip_image_classifier.py
