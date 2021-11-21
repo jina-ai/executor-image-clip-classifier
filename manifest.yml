@@ -1,5 +1,5 @@
 manifest_version: 1
-name: executor-image-clip-classifier
+name: CLIPImageClassifier
 description: Image classifier that wraps image-text classification using CLIP model
 url: https://github.com/jina-ai/executor-image-clip-classifier
 keywords: [clip, image, crossmodal, classifier, PyTorch, en]
