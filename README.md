@@ -8,7 +8,7 @@
 ```python
 from jina import Flow
 	
-f = Flow().add(uses='jinahub+docker://executor-image-clip-classifier')
+f = Flow().add(uses='jinahub+docker://CLIPImageClassifier')
 ```
 
 #### via source code
@@ -16,7 +16,7 @@ f = Flow().add(uses='jinahub+docker://executor-image-clip-classifier')
 ```python
 from jina import Flow
 	
-f = Flow().add(uses='jinahub://executor-image-clip-classifier')
+f = Flow().add(uses='jinahub://CLIPImageClassifier')
 ```
 
 - To override `__init__` args & kwargs, use `.add(..., uses_with: {'key': 'value'})`
