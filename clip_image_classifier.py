@@ -1,7 +1,7 @@
 from jina import Executor, DocumentArray, requests
 from numpy.core.fromnumeric import argmax
 from transformers import CLIPProcessor, CLIPModel
-from typing import Optional, Tuple, List
+from typing import List
 import torch
 
 class CLIPImageClassifier(Executor):
@@ -10,10 +10,10 @@ class CLIPImageClassifier(Executor):
     def __init__(
         self,
         classes: List[str],
-        pretrained_model_name_or_path: str = "openai/clip-vit-base-patch32",
-        device: str = "cpu",
+        pretrained_model_name_or_path: str = 'openai/clip-vit-base-patch32',
+        device: str = 'cpu',
         batch_size: int = 32,
-        traversal_paths: Tuple = ('r',),
+        traversal_paths: str = 'r',
         *args,
         **kwargs
         ):
@@ -46,9 +46,7 @@ class CLIPImageClassifier(Executor):
         self.model.to(self.device).eval()
 
     @requests
-    def classify(self, docs: Optional[DocumentArray], parameters: dict, **kwargs):
-        if docs is None:
-            return
+    def classify(self, docs: DocumentArray, parameters: dict, **kwargs):
 
         for docs_batch in docs.traverse_flat(parameters.get('traversal_paths', self.traversal_paths)).batch(
             batch_size=parameters.get('batch_size', self.batch_size)
@@ -60,13 +58,14 @@ class CLIPImageClassifier(Executor):
                 logits_per_image = outputs.logits_per_image # this is the image-text similarity score
                 probs = logits_per_image.softmax(dim=1)
             for doc,prob in zip(docs_batch,probs):
-                doc.tags["class"] = {"label":self.classes[argmax(prob)], "score":float(max(prob))}
+                prediction = max(prob)
+                doc.tags['class'] = {'label':self.classes[(prob==prediction).nonzero(as_tuple=True)[0]], 'score':float(prediction)}
 
     def _generate_input_features(self,images):
         inputs = self.preprocessor(
             text=self.classes,
             images=images,
-            return_tensors="pt",
+            return_tensors='pt',
             padding=True
             )
         inputs = {
