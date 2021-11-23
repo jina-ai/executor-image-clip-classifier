@@ -1,12 +1,16 @@
 from jina.types.request import Response
 from clip_image_classifier import CLIPImageClassifier
-from jina import Document, DocumentArray
+from jina import Document, DocumentArray, Executor
 import pytest
 from pathlib import Path
 
 @pytest.fixture(scope='module')
 def classifier(classes=['this is a cat','this is a dog','this is a person']) -> CLIPImageClassifier:
     return CLIPImageClassifier(classes=classes)
+
+def test_config():
+    ex = Executor.load_config(str(Path(__file__).parents[2] / 'config.yml'))
+    assert len(ex.classes) != 0
 
 def test_no_documents(classifier: CLIPImageClassifier):
     docs = DocumentArray()
