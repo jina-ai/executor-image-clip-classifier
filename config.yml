@@ -1,4 +1,6 @@
 jtype: CLIPImageClassifier
+with: 
+  classes: ["this is a person","this is a cat","this is a dog"]
 metas:
   py_modules:
     - clip_image_classifier.py

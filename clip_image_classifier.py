@@ -9,7 +9,7 @@ class CLIPImageClassifier(Executor):
 
     def __init__(
         self,
-        classes: List[str],
+        classes: List[str] = ["this is a person","this is a cat","this is a dog"],
         pretrained_model_name_or_path: str = 'openai/clip-vit-base-patch32',
         device: str = 'cpu',
         batch_size: int = 32,
