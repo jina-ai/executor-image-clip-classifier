@@ -1,4 +1,3 @@
-from jina.types.request import Response
 from clip_image_classifier import CLIPImageClassifier
 from jina import Document, DocumentArray, Executor
 import pytest
@@ -11,6 +10,15 @@ def classifier(classes=['this is a cat','this is a dog','this is a person']) -> 
 def test_config():
     ex = Executor.load_config(str(Path(__file__).parents[2] / 'config.yml'))
     assert len(ex.classes) != 0
+
+def test_no_classes():
+    with pytest.raises(ValueError,match='``classes`` parameter is mandatory. Pass it in parameters'):
+        url = str(Path(__file__).parents[1] / 'imgs' / 'image1.jpg')
+        doc = Document(uri=url)
+        doc.load_uri_to_image_blob()
+        docs = DocumentArray([doc])
+        classifier = CLIPImageClassifier()
+        classifier.classify(docs,parameters={}) 
 
 def test_no_documents(classifier: CLIPImageClassifier):
     docs = DocumentArray()
