@@ -28,7 +28,8 @@ doc = Document(uri='/your/image/path')
 docs.append(doc)
 
 with f:
-    f.post(on='/classify', inputs=docs, on_done=lambda resp: print(resp.docs[0].tags['class']['label']))
+    res = f.post(on='/classify', inputs=docs)
+    print(res[0].tags['class']['label'])
 ```
 ## Returns
 
@@ -57,7 +58,8 @@ doc = Document(uri='/your/image/path')
 docs.append(doc)
 
 with f:
-    f.post(on='/classify', inputs=docs, on_done=lambda resp: print(resp.docs[0].tags['class']['label']))
+    res = f.post(on='/classify', inputs=docs)
+    print(res[0].tags['class']['label'])
 ```
 
 ## Reference

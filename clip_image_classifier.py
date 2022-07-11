@@ -9,14 +9,14 @@ class CLIPImageClassifier(Executor):
     """Classifies an image given a list of text classes using CLIP model"""
 
     def __init__(
-        self,
-        classes: Optional[List[str]] = None,
-        pretrained_model_name_or_path: str = 'openai/clip-vit-base-patch32',
-        device: str = 'cpu',
-        batch_size: int = 32,
-        traversal_paths: str = 'r',
-        *args,
-        **kwargs
+            self,
+            classes: Optional[List[str]] = None,
+            pretrained_model_name_or_path: str = 'openai/clip-vit-base-patch32',
+            device: str = 'cpu',
+            batch_size: int = 32,
+            traversal_paths: str = '@r',
+            *args,
+            **kwargs
     ):
         """
         :param classes: List of string that represents the classes an image can belong to
@@ -53,10 +53,10 @@ class CLIPImageClassifier(Executor):
                 '``classes`` parameter is mandatory. Pass it in parameters'
                 'or in constructor. e.g. ["This is a cat","This is a person", "This is a dog"]'
             )
-        for docs_batch in docs.traverse_flat(
-            parameters.get('traversal_paths', self.traversal_paths)
-        ).batch(batch_size=parameters.get('batch_size', self.batch_size)):
-            image_batch = docs_batch.get_attributes('blob')
+        for docs_batch in docs[
+            parameters.get('traversal_paths', self.traversal_paths)].batch(
+            batch_size=parameters.get('batch_size', self.batch_size)):
+            image_batch = docs_batch.tensors
             with torch.inference_mode():
                 input = self._generate_input_features(classes, image_batch)
                 outputs = self.model(**input)
