@@ -8,7 +8,7 @@ from clip_image_classifier import CLIPImageClassifier
 
 @pytest.mark.parametrize('request_size', [1])
 def test_from_uri(request_size: int):
-    doc = Document(uri=str(Path(__file__).parents[1] / 'imgs' / 'image1.png'))
+    doc = Document(uri=str(Path(__file__).parents[1] / 'imgs' / 'image1.jpg'))
     doc.load_uri_to_image_tensor()
     docs = DocumentArray([doc])
 
