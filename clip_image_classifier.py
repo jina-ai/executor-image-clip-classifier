@@ -56,7 +56,9 @@ class CLIPImageClassifier(Executor):
         for docs_batch in docs[
             parameters.get('traversal_paths', self.traversal_paths)].batch(
             batch_size=parameters.get('batch_size', self.batch_size)):
-            image_batch = docs_batch.tensors
+            image_batch = []  # huggingface's clip feature_extractor requires list-like input
+            for each_doc in docs_batch:
+                image_batch.append(each_doc.tensor)
             with torch.inference_mode():
                 input = self._generate_input_features(classes, image_batch)
                 outputs = self.model(**input)
