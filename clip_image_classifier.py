@@ -3,7 +3,7 @@ from transformers import CLIPProcessor, CLIPModel
 from typing import List, Optional
 import torch
 from jina.logging.logger import JinaLogger
-
+import warnings
 
 class CLIPImageClassifier(Executor):
     """Classifies an image given a list of text classes using CLIP model"""
@@ -14,7 +14,8 @@ class CLIPImageClassifier(Executor):
             pretrained_model_name_or_path: str = 'openai/clip-vit-base-patch32',
             device: str = 'cpu',
             batch_size: int = 32,
-            traversal_paths: str = '@r',
+            access_paths: str = '@r',
+            traversal_paths: Optional[str] = None,
             *args,
             **kwargs
     ):
@@ -27,15 +28,22 @@ class CLIPImageClassifier(Executor):
             - A path to a directory containing model weights saved, e.g.,
                 ./my_model_directory/
         :param device: Pytorch device to put the model on, e.g. 'cpu', 'cuda', 'cuda:1'
-        :param traversal_paths: Default traversal paths for encoding, used if
+        :param access_paths: Default traversal paths for encoding, used if
             the traversal path is not passed as a parameter with the request.
+        :param traversal_paths: please use access_paths
         :param batch_size: Default batch size for encoding, used if the
             batch size is not passed as a parameter with the request.
         """
         super().__init__(*args, **kwargs)
         self.logger = JinaLogger(getattr(self.metas, 'name', self.__class__.__name__))
         self.batch_size = batch_size
-        self.traversal_paths = traversal_paths
+        if traversal_paths is not None:
+            self.access_paths = traversal_paths
+            warnings.warn("'traversal_paths' will be deprecated in the future, please use 'access_paths'.",
+                          DeprecationWarning,
+                          stacklevel=2)
+        else:
+            self.access_paths = access_paths
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.classes = classes
         self.device = device
@@ -54,7 +62,7 @@ class CLIPImageClassifier(Executor):
                 'or in constructor. e.g. ["This is a cat","This is a person", "This is a dog"]'
             )
         for docs_batch in docs[
-            parameters.get('traversal_paths', self.traversal_paths)].batch(
+            parameters.get('access_paths', self.access_paths)].batch(
             batch_size=parameters.get('batch_size', self.batch_size)):
             image_batch = []  # huggingface's clip feature_extractor requires list-like input
             for each_doc in docs_batch:
